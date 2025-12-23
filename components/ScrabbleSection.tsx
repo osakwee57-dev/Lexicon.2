@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { SCRABBLE_DATA, Difficulty, RESERVE_DATA } from '../data/scrabble';
-import { ScrabbleWord } from '../types';
-import { playSuccessSound, playFailureSound } from '../utils/audioEffects';
-import { trackEvent } from '../utils/analytics';
+import { SCRABBLE_DATA, Difficulty, RESERVE_DATA } from '../data/scrabble.ts';
+import { ScrabbleWord } from '../types.ts';
+import { playSuccessSound, playFailureSound } from '../utils/audioEffects.ts';
+import { trackEvent } from '../utils/analytics.ts';
 
 interface ScrabbleSectionProps {
   onAddPoints: (points: number) => void;

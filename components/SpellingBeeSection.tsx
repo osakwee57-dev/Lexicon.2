@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { SCRABBLE_DATA, Difficulty, RESERVE_DATA } from '../data/scrabble';
-import { ScrabbleWord, Progress } from '../types';
-import { playSuccessSound, playFailureSound } from '../utils/audioEffects';
-import { trackEvent } from '../utils/analytics';
+import { SCRABBLE_DATA, Difficulty, RESERVE_DATA } from '../data/scrabble.ts';
+import { ScrabbleWord, Progress } from '../types.ts';
+import { playSuccessSound, playFailureSound } from '../utils/audioEffects.ts';
+import { trackEvent } from '../utils/analytics.ts';
 
 interface SpellingBeeSectionProps {
   onAddPoints: (points: number) => void;

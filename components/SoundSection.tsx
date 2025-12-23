@@ -1,8 +1,7 @@
-
 import React, { useState, useCallback } from 'react';
-import { SOUNDS_DATA } from '../data/sounds';
-import { SoundGroup, Word } from '../types';
-import { trackEvent } from '../utils/analytics';
+import { SOUNDS_DATA } from '../data/sounds.ts';
+import { SoundGroup, Word } from '../types.ts';
+import { trackEvent } from '../utils/analytics.ts';
 
 const SoundSection: React.FC = () => {
   const [selectedGroup, setSelectedGroup] = useState<SoundGroup | null>(null);

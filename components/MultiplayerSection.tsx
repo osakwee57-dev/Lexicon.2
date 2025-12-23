@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { SCRABBLE_DATA } from '../data/scrabble';
-import { playSuccessSound, playFailureSound } from '../utils/audioEffects';
-import { trackEvent } from '../utils/analytics';
+import { SCRABBLE_DATA } from '../data/scrabble.ts';
+import { playSuccessSound, playFailureSound } from '../utils/audioEffects.ts';
+import { trackEvent } from '../utils/analytics.ts';
 
 interface MultiplayerSectionProps {
   onAddPoints: (points: number) => void;
@@ -333,7 +332,7 @@ const MultiplayerSection: React.FC<MultiplayerSectionProps> = ({ onAddPoints }) 
                 className="text-[10px] font-bold uppercase tracking-[0.3em] text-indigo-600 hover:text-indigo-800 transition-colors mb-12 flex items-center gap-2"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.657-3.657a1 1 0 011.14-.267zM15.707 6.293a1 1 0 010 1.414 3 3 0 000 4.242 1 1 0 01-1.414 1.414 5 5 0 010-7.072 1 1 0 011.414 0z" clipRule="evenodd" />
+                  <path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.657-3.657a1 1 0 011.14-.267zM15.707 6.293a1 1 0 010 1.414 3 3 0 000 4.242 1 1 0 01-1.414 1.414 5 5 0 010-7.072 1 1 0 011.414 0zM18.536 3.464a1 1 0 010 1.414 7 7 0 000 9.9 1 1 0 11-1.414 1.414 9 9 0 010-12.728 1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
                 Replay Audio
               </button>

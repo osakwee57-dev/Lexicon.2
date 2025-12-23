@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Layout from './components/Layout';
-import SoundSection from './components/SoundSection';
-import ScrabbleSection from './components/ScrabbleSection';
-import SpellingBeeSection from './components/SpellingBeeSection';
-import MultiplayerSection from './components/MultiplayerSection';
-import { AppState } from './types';
-import { trackPageView } from './utils/analytics';
+import Layout from './components/Layout.tsx';
+import SoundSection from './components/SoundSection.tsx';
+import ScrabbleSection from './components/ScrabbleSection.tsx';
+import SpellingBeeSection from './components/SpellingBeeSection.tsx';
+import MultiplayerSection from './components/MultiplayerSection.tsx';
+import { AppState } from './types.ts';
+import { trackPageView } from './utils/analytics.ts';
 
 const App: React.FC = () => {
   const [state, setState] = useState<AppState>(() => {

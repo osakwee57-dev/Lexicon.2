@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { SCRABBLE_DATA, Difficulty, ScrabbleLevel, RESERVE_DATA } from '../data/scrabble';
+import { SCRABBLE_DATA, Difficulty, RESERVE_DATA } from '../data/scrabble';
 import { ScrabbleWord } from '../types';
 import { playSuccessSound, playFailureSound } from '../utils/audioEffects';
 import { trackEvent } from '../utils/analytics';
@@ -178,7 +179,7 @@ const ScrabbleSection: React.FC<ScrabbleSectionProps> = ({ onAddPoints }) => {
   if (isLevelComplete) {
     return (
       <div className="max-w-2xl mx-auto py-20 text-center animate-in zoom-in duration-500">
-        <div className="bg-white rounded-3xl p-12 shadow-xl border border-slate-200">
+        <div className="bg-white rounded-[1.5rem] p-12 shadow-xl border border-slate-200">
           <div className="text-6xl mb-6">🎯</div>
           <h2 className="text-3xl font-bold text-slate-900 mb-2">Stage Complete</h2>
           <p className="text-slate-500 mb-10 text-sm">Level {subLevel} successfully concluded.</p>
@@ -198,8 +199,8 @@ const ScrabbleSection: React.FC<ScrabbleSectionProps> = ({ onAddPoints }) => {
   if (!difficulty) {
     return (
       <div className="max-w-4xl mx-auto py-6 animate-in fade-in">
-        <div className="bg-white border border-slate-200 rounded-[2rem] p-8 md:p-12 shadow-sm">
-          <h2 className="text-2xl font-bold text-center text-slate-900 mb-10 tracking-tight">Select Difficulty</h2>
+        <div className="bg-white border border-slate-200 rounded-[1.5rem] p-8 md:p-12 shadow-sm ring-1 ring-slate-900/5">
+          <h2 className="text-2xl font-bold text-center text-slate-900 mb-10 tracking-tight">Select Lexical Difficulty</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {(['Easy', 'Medium', 'Hard'] as Difficulty[]).map(diff => (
               <button
@@ -223,24 +224,24 @@ const ScrabbleSection: React.FC<ScrabbleSectionProps> = ({ onAddPoints }) => {
   if (difficulty && !subLevel) {
     return (
       <div className="max-w-4xl mx-auto py-6 animate-in fade-in">
-        <div className="bg-white border border-slate-200 rounded-[2rem] p-8 md:p-12 shadow-sm">
+        <div className="bg-white border border-slate-200 rounded-[1.5rem] p-8 md:p-12 shadow-sm ring-1 ring-slate-900/5">
           <div className="flex items-center gap-4 mb-10">
-            <button onClick={() => setDifficulty(null)} className="text-slate-400 hover:text-slate-900 transition-colors">
+            <button onClick={() => setDifficulty(null)} className="p-2 text-slate-400 hover:text-slate-900 transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <h2 className="text-2xl font-bold text-slate-900">{difficulty} – Select Stage</h2>
+            <h2 className="text-2xl font-bold text-slate-900">{difficulty} • Stage Select</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
             {Array.from({ length: 10 }).map((_, i) => (
               <button
                 key={i}
                 onClick={() => setSubLevel(i + 1)}
-                className="aspect-video bg-slate-50 border border-slate-200 rounded-xl flex flex-col items-center justify-center hover:border-indigo-600 hover:bg-white transition-all shadow-sm"
+                className="aspect-video bg-slate-50 border border-slate-200 rounded-xl flex flex-col items-center justify-center hover:border-indigo-600 hover:bg-white transition-all shadow-sm group"
               >
-                <span className="text-xl font-bold text-slate-800">{i + 1}</span>
-                <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mt-1">Stage</span>
+                <span className="text-xl font-bold text-slate-800 group-hover:text-indigo-600">{i + 1}</span>
+                <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mt-1">Unit</span>
               </button>
             ))}
           </div>
@@ -251,75 +252,67 @@ const ScrabbleSection: React.FC<ScrabbleSectionProps> = ({ onAddPoints }) => {
 
   return (
     <div className="max-w-4xl mx-auto py-2 animate-in fade-in">
-      <div className="bg-white border border-slate-200 rounded-[2rem] p-6 md:p-10 shadow-sm">
-        {/* HUD */}
+      <div className="bg-white border border-slate-200 rounded-[1.5rem] p-6 md:p-10 shadow-sm ring-1 ring-slate-900/5">
         <div className="flex justify-between items-center mb-8">
-          <button onClick={() => setSubLevel(null)} className="flex items-center gap-1 text-slate-400 font-bold hover:text-slate-900 transition-colors text-sm">
+          <button onClick={() => setSubLevel(null)} className="flex items-center gap-1 text-slate-400 font-bold hover:text-slate-900 transition-colors text-xs uppercase tracking-widest">
             <span>←</span> Back
           </button>
           <div className="flex flex-col items-center flex-1 mx-8">
-            <div className="w-full max-w-xs h-1 bg-slate-200 rounded-full overflow-hidden">
+            <div className="w-full max-w-xs h-1 bg-slate-100 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-indigo-600 transition-all duration-500" 
                 style={{ width: `${((wordIndex + 1) / (sessionWords.length || 1)) * 100}%` }} 
               />
             </div>
-            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">
-              Unit {wordIndex + 1} of {sessionWords.length}
+            <div className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-2">
+              Unit {wordIndex + 1} / {sessionWords.length}
             </div>
           </div>
-          <div className="flex gap-2 items-center">
-            <button 
-              onClick={handleSkip}
-              className="px-3 py-1 bg-white hover:bg-slate-50 text-slate-500 rounded-lg font-bold text-[10px] transition-colors border border-slate-200 uppercase tracking-widest"
-            >
-              Skip
-            </button>
-          </div>
+          <button 
+            onClick={handleSkip}
+            className="px-3 py-1 bg-white hover:bg-slate-50 text-slate-500 rounded-lg font-bold text-[10px] transition-colors border border-slate-200 uppercase tracking-widest"
+          >
+            Skip
+          </button>
         </div>
 
         {currentWord && (
-          <div className="bg-white rounded-2xl p-6 md:p-10 border border-slate-100 relative overflow-hidden min-h-[500px] flex flex-col items-center justify-center">
+          <div className="bg-slate-50 rounded-2xl p-6 md:p-10 border border-slate-100 relative overflow-hidden min-h-[500px] flex flex-col items-center justify-center">
             {feedback === 'success' && (
               <div className="absolute inset-0 z-20 bg-emerald-600/95 flex flex-col items-center justify-center text-white animate-in fade-in">
-                <h3 className="text-3xl font-bold mb-2">Accurate</h3>
-                <p className="text-sm opacity-80 font-medium">Progress recorded</p>
+                <h3 className="text-3xl font-bold mb-2 tracking-tight">Accurate</h3>
+                <p className="text-sm opacity-80 font-medium">Synchronizing progress...</p>
               </div>
             )}
-            
             {feedback === 'reveal' && (
               <div className="absolute inset-0 z-20 bg-slate-900/95 flex flex-col items-center justify-center text-white animate-in fade-in">
-                <span className="text-xs text-slate-500 font-mono mb-4 tracking-[0.2em]">REVEALING UNIT</span>
+                <span className="text-[10px] text-slate-500 font-mono mb-4 tracking-[0.3em]">REVEALING UNIT</span>
                 <h3 className="text-5xl font-bold text-white mb-6 tracking-tight">{currentWord.text}</h3>
-                <p className="text-xs opacity-50 italic">Observation phase...</p>
+                <p className="text-xs opacity-50 italic">Observation phase active...</p>
               </div>
             )}
 
             <div className="w-full flex flex-col items-center">
-              {/* Minimal Visual */}
-              <div className="text-8xl mb-8 opacity-90">
+              <div className="text-8xl mb-8 opacity-90 drop-shadow-sm">
                 {currentWord.emoji}
               </div>
-              
-              {/* Phonetic Support */}
               <div className="mb-10">
-                <div className="inline-block px-8 py-3 bg-slate-50 border border-slate-100 rounded-lg text-lg font-mono text-slate-600 font-medium">
+                <div className="inline-block px-8 py-3 bg-white border border-slate-200 rounded-lg text-lg font-mono text-slate-600 font-medium shadow-sm">
                   {currentWord.phonetic}
                 </div>
               </div>
 
-              {/* Answer Slots */}
               <div className="flex flex-wrap justify-center gap-2 mb-14">
                 {userLetters.map((letter, i) => (
                   <button
                     key={i}
                     onClick={() => handleRemoveLetter(i)}
-                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-lg border flex items-center justify-center text-2xl font-bold transition-all ${
+                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-xl border flex items-center justify-center text-2xl font-bold transition-all ${
                       letter 
                         ? feedback === 'fail' 
                           ? 'bg-rose-50 border-rose-200 text-rose-700 animate-shake' 
-                          : 'bg-white border-indigo-500 text-indigo-600 shadow-sm'
-                        : 'bg-slate-50 border-slate-100 border-dashed text-transparent'
+                          : 'bg-white border-indigo-500 text-indigo-600 shadow-md ring-2 ring-indigo-50'
+                        : 'bg-slate-100/50 border-slate-200 border-dashed text-transparent'
                     }`}
                   >
                     {letter}
@@ -327,14 +320,13 @@ const ScrabbleSection: React.FC<ScrabbleSectionProps> = ({ onAddPoints }) => {
                 ))}
               </div>
 
-              {/* Letter Tray */}
               <div className="w-full max-w-2xl">
                 <div className="flex flex-wrap justify-center gap-2">
                   {scrambledLetters.map((letter, i) => (
                     <button
                       key={`${letter}-${i}`}
                       onClick={() => handleTileClick(letter, i)}
-                      className="w-12 h-12 sm:w-14 sm:h-14 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-xl font-bold text-slate-600 shadow-sm hover:border-indigo-600 hover:shadow-md transition-all active:bg-slate-50"
+                      className="w-12 h-12 sm:w-14 sm:h-14 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-xl font-bold text-slate-600 shadow-sm hover:border-indigo-600 hover:shadow-md hover:text-indigo-600 transition-all active:scale-95"
                     >
                       {letter}
                     </button>
@@ -352,9 +344,7 @@ const ScrabbleSection: React.FC<ScrabbleSectionProps> = ({ onAddPoints }) => {
           25% { transform: translateX(-3px); }
           75% { transform: translateX(3px); }
         }
-        .animate-shake {
-          animation: shake 0.15s ease-in-out 2;
-        }
+        .animate-shake { animation: shake 0.15s ease-in-out 2; }
       `}</style>
     </div>
   );

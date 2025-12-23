@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react';
+
+import React, { useState, useCallback } from 'react';
 import { SOUNDS_DATA } from '../data/sounds';
 import { SoundGroup, Word } from '../types';
 import { trackEvent } from '../utils/analytics';
@@ -28,11 +29,11 @@ const SoundSection: React.FC = () => {
 
   return (
     <div className="animate-in fade-in duration-500">
-      <div className="bg-white border border-slate-200 rounded-[2rem] p-8 md:p-12 shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-[1.5rem] p-8 md:p-12 shadow-sm ring-1 ring-slate-900/5">
         <div className="mb-12 text-center">
           <h2 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">Phonetic Directory</h2>
           <p className="text-slate-500 max-w-xl mx-auto text-sm leading-relaxed">
-            Detailed guide to English phonemes. Select a phonetic symbol to analyze examples and production mechanics.
+            A comprehensive guide to English phonemes. Select a symbol to analyze articulation mechanics and lexical examples.
           </p>
         </div>
 
@@ -40,7 +41,7 @@ const SoundSection: React.FC = () => {
           {/* Vowels */}
           <section>
             <div className="flex items-center gap-3 mb-8 pb-2 border-b border-slate-100">
-              <span className="text-indigo-600 font-bold text-sm tracking-widest uppercase">Vocalic Sounds</span>
+              <span className="text-indigo-600 font-bold text-[10px] tracking-[0.2em] uppercase">Vocalic Phonemes</span>
             </div>
             <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3">
               {SOUNDS_DATA.filter(s => s.category === 'vowel' || s.category === 'diphthong').map(sound => (
@@ -58,7 +59,7 @@ const SoundSection: React.FC = () => {
           {/* Consonants */}
           <section>
             <div className="flex items-center gap-3 mb-8 pb-2 border-b border-slate-100">
-              <span className="text-slate-400 font-bold text-sm tracking-widest uppercase">Consonantal Articulations</span>
+              <span className="text-slate-400 font-bold text-[10px] tracking-[0.2em] uppercase">Consonantal Phonemes</span>
             </div>
             <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3">
               {SOUNDS_DATA.filter(s => s.category === 'consonant').map(sound => (
@@ -75,27 +76,26 @@ const SoundSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Sounds Modal (Group View) */}
+      {/* Group Detail Modal */}
       {selectedGroup && !selectedWord && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl border border-slate-200">
+          <div className="bg-white rounded-[1.5rem] w-full max-w-2xl overflow-hidden shadow-2xl border border-slate-200">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
               <h4 className="text-xl font-bold text-slate-900">Phoneme: /{selectedGroup.symbol}/</h4>
-              <button onClick={closeModal} className="text-slate-400 hover:text-slate-600 transition-colors">
+              <button onClick={closeModal} className="p-2 text-slate-400 hover:text-slate-600 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            
             <div className="p-8">
-              <h5 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Lexical Examples</h5>
+              <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">Lexical Examples</h5>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {selectedGroup.exampleWords.map((word) => (
                   <button
                     key={word.text}
                     onClick={() => setSelectedWord(word)}
-                    className="group bg-white border border-slate-200 p-4 rounded-xl text-left hover:border-indigo-600 hover:shadow-md transition-all"
+                    className="group bg-slate-50 border border-slate-200 p-4 rounded-xl text-left hover:border-indigo-600 hover:bg-white hover:shadow-md transition-all"
                   >
                     <div className="text-base font-bold text-slate-900 group-hover:text-indigo-600">{word.text}</div>
                     <div className="text-xs text-slate-400 font-mono mt-1">{word.phonetic}</div>
@@ -110,22 +110,18 @@ const SoundSection: React.FC = () => {
       {/* Word Detail Modal */}
       {selectedWord && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm animate-in zoom-in duration-300">
-          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl transform border border-slate-200">
+          <div className="bg-white rounded-[1.5rem] w-full max-w-md overflow-hidden shadow-2xl transform border border-slate-200">
             <div className="p-6 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
                <div>
                  <h4 className="text-2xl font-bold text-slate-900">{selectedWord.text}</h4>
                  <p className="text-sm text-indigo-600 font-mono font-medium">{selectedWord.phonetic}</p>
                </div>
-               <button 
-                  onClick={closeWordModal} 
-                  className="text-slate-400 hover:text-slate-600"
-                >
+               <button onClick={closeWordModal} className="p-2 text-slate-400 hover:text-slate-600">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
             </div>
-
             <div className="p-8">
               <div className="flex justify-center mb-10">
                 <button 
@@ -137,7 +133,6 @@ const SoundSection: React.FC = () => {
                   </svg>
                 </button>
               </div>
-
               <div className="space-y-6">
                 <div>
                   <h6 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">Articulation Mechanics</h6>
@@ -145,14 +140,12 @@ const SoundSection: React.FC = () => {
                     {selectedWord.production}
                   </p>
                 </div>
-                
                 <div className="text-xs text-slate-500 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100/50">
-                  <span className="font-bold text-indigo-700 block mb-1">Notes:</span>
+                  <span className="font-bold text-indigo-700 block mb-1">Lexical Context:</span>
                   {selectedWord.description}
                 </div>
               </div>
             </div>
-
             <div className="p-6 border-t border-slate-100 flex gap-3">
               <button 
                 onClick={closeWordModal}

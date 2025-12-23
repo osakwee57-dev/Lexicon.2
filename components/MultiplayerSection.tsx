@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { SCRABBLE_DATA } from '../data/scrabble';
 import { playSuccessSound, playFailureSound } from '../utils/audioEffects';
@@ -79,24 +80,20 @@ const MultiplayerSection: React.FC<MultiplayerSectionProps> = ({ onAddPoints }) 
           }
         }
         break;
-
       case 'JOIN_FAILURE':
         if (payload.targetId === myId) {
           setError(payload.reason);
           setPhase('lobby');
         }
         break;
-
       case 'LOBBY_UPDATE':
         setPlayers(payload.players);
         break;
-
       case 'START_GAME':
         setWordPool(payload.pool);
         setPhase('battle');
         setBattleLog(["Session Initialized"]);
         break;
-
       case 'STRIKE_DEALT':
         setPlayers(prev => prev.map(p => 
           p.id !== senderId ? { ...p, hp: Math.max(0, p.hp - payload.damage) } : p
@@ -106,7 +103,6 @@ const MultiplayerSection: React.FC<MultiplayerSectionProps> = ({ onAddPoints }) 
         setIsWordResolved(true);
         if (senderId !== myId) speak("Incoming strike");
         break;
-        
       case 'PLAYER_DISCONNECTED':
         setPlayers(prev => prev.filter(p => p.id !== senderId));
         setBattleLog(prev => [`Peer disconnected: ${senderId}`, ...prev]);
@@ -158,7 +154,6 @@ const MultiplayerSection: React.FC<MultiplayerSectionProps> = ({ onAddPoints }) 
   const handleCorrectSubmission = (e: React.FormEvent) => {
     e.preventDefault();
     if (isWordResolved || !userInput.trim()) return;
-
     const currentWord = wordPool[currentIndex];
     if (userInput.trim().toUpperCase() === currentWord.word.toUpperCase()) {
       const damage = currentWord.difficulty === 'Ultra-Hard' ? 40 : 15;
@@ -196,21 +191,20 @@ const MultiplayerSection: React.FC<MultiplayerSectionProps> = ({ onAddPoints }) 
   if (phase === 'lobby') {
     return (
       <div className="max-w-2xl mx-auto py-10 animate-in fade-in text-center">
-        <div className="bg-white rounded-[2rem] p-12 shadow-xl border border-slate-200">
+        <div className="bg-white rounded-[1.5rem] p-12 shadow-xl border border-slate-200 ring-1 ring-slate-900/5">
           <h2 className="text-3xl font-bold text-slate-900 mb-4 tracking-tight">Lexicon Royale</h2>
           <p className="text-slate-500 text-sm mb-12">Synchronous lexical competition for 2-4 participants.</p>
-          
           <div className="flex flex-col gap-8 items-center">
             <button 
               onClick={createRoom}
-              className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold text-base hover:bg-indigo-700 transition-all shadow-lg"
+              className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200"
             >
               Initialize Host Session
             </button>
             <div className="flex items-center w-full gap-4">
-              <div className="h-px bg-slate-200 flex-1"></div>
-              <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">or Join Session</span>
-              <div className="h-px bg-slate-200 flex-1"></div>
+              <div className="h-px bg-slate-100 flex-1"></div>
+              <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">or Join Peer</span>
+              <div className="h-px bg-slate-100 flex-1"></div>
             </div>
             <form onSubmit={joinRoom} className="w-full flex gap-2">
               <input 
@@ -219,7 +213,7 @@ const MultiplayerSection: React.FC<MultiplayerSectionProps> = ({ onAddPoints }) 
                 value={roomCode}
                 onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
                 placeholder="TOKEN"
-                className="flex-1 px-6 py-3 rounded-xl border border-slate-200 text-center font-bold text-base focus:border-indigo-600 outline-none uppercase"
+                className="flex-1 px-6 py-3 rounded-xl border border-slate-200 text-center font-bold text-base focus:border-indigo-600 outline-none uppercase tracking-widest"
               />
               <button 
                 type="submit"
@@ -240,38 +234,33 @@ const MultiplayerSection: React.FC<MultiplayerSectionProps> = ({ onAddPoints }) 
     const host = players.find(p => p.id === myId)?.isHost;
     return (
       <div className="max-w-xl mx-auto py-12 text-center animate-in fade-in">
-        <div className="bg-white rounded-[2rem] p-10 shadow-xl border border-slate-200">
-          <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Access Token</h3>
+        <div className="bg-white rounded-[1.5rem] p-10 shadow-xl border border-slate-200 ring-1 ring-slate-900/5">
+          <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mb-2">Access Token</h3>
           <div className="text-5xl font-bold text-indigo-600 mb-10 tracking-widest">{roomCode}</div>
-          
-          <div className="bg-slate-50 p-6 rounded-xl border border-slate-100 mb-8">
+          <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8">
             <div className="flex justify-between items-center mb-6">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Active Roster</span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Roster Status</span>
               <span className="text-xs font-bold text-slate-400">{players.length}/4</span>
             </div>
             <div className="space-y-2">
               {players.map(p => (
-                <div key={p.id} className="flex items-center gap-3 bg-white p-3 rounded-lg border border-slate-100 text-sm">
-                  <div className="w-6 h-6 bg-slate-100 rounded flex items-center justify-center text-[10px]">👤</div>
+                <div key={p.id} className="flex items-center gap-3 bg-white p-4 rounded-xl border border-slate-200 text-sm shadow-sm">
+                  <div className="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-bold text-xs">{p.name.charAt(0)}</div>
                   <span className="font-bold text-slate-700">{p.name}</span>
                 </div>
               ))}
-              {players.length < 2 && (
-                <p className="text-[10px] text-slate-400 italic pt-2">Awaiting peer connection...</p>
-              )}
             </div>
           </div>
-
           {host ? (
             <button 
               onClick={startGame}
               disabled={players.length < 2}
               className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 disabled:opacity-20 transition-all shadow-md"
             >
-              Execute Session
+              Execute Battle
             </button>
           ) : (
-            <div className="text-slate-400 text-xs italic">Awaiting session initialization by host...</div>
+            <div className="text-slate-400 text-xs italic py-4 animate-pulse">Awaiting session start by host...</div>
           )}
         </div>
       </div>
@@ -283,17 +272,14 @@ const MultiplayerSection: React.FC<MultiplayerSectionProps> = ({ onAddPoints }) 
     const won = winner?.id === myId;
     return (
       <div className="max-w-xl mx-auto py-12 text-center animate-in zoom-in">
-        <div className={`bg-white rounded-[2rem] p-12 shadow-xl border ${won ? 'border-emerald-200' : 'border-rose-200'}`}>
+        <div className={`bg-white rounded-[1.5rem] p-12 shadow-xl border ${won ? 'border-emerald-200' : 'border-rose-200'}`}>
           <div className="text-6xl mb-6">{won ? '🥇' : '🏳️'}</div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-3">{won ? 'Victory Achieved' : 'Session Terminated'}</h2>
+          <h2 className="text-2xl font-bold text-slate-900 mb-3">{won ? 'Objective Achieved' : 'Session Terminated'}</h2>
           <p className="text-sm text-slate-500 mb-10">
-            {winner ? `Subject "${winner.name}" remains operational.` : 'No active subjects detected.'}
+            {winner ? `Participant "${winner.name}" remains operational.` : 'All units eliminated.'}
           </p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-slate-800 transition-all"
-          >
-            Exit Terminal
+          <button onClick={() => window.location.reload()} className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-slate-800 transition-all">
+            Exit Session
           </button>
         </div>
       </div>
@@ -307,18 +293,18 @@ const MultiplayerSection: React.FC<MultiplayerSectionProps> = ({ onAddPoints }) 
   return (
     <div className="max-w-6xl mx-auto py-2 grid grid-cols-1 lg:grid-cols-4 gap-8">
       {/* Peers List */}
-      <div className="space-y-3">
-        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1 mb-4">Active Peers</div>
+      <div className="space-y-4">
+        <div className="bg-white border border-slate-200 rounded-[1.5rem] p-5 shadow-sm">
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1 mb-4">Network Status</div>
           <div className="space-y-3">
             {otherPlayers.map(p => (
-              <div key={p.id} className={`p-4 rounded-xl border transition-all ${p.hp <= 0 ? 'bg-slate-50 opacity-30 grayscale border-slate-200' : 'bg-slate-50 border-slate-100'}`}>
+              <div key={p.id} className={`p-4 rounded-xl border transition-all ${p.hp <= 0 ? 'bg-slate-50 opacity-30 grayscale border-slate-200' : 'bg-slate-50 border-slate-200'}`}>
                 <div className="flex justify-between items-center mb-2">
                   <span className="font-bold text-slate-700 text-xs truncate">{p.name}</span>
                   <span className="font-bold text-[10px] text-slate-400">{p.hp}%</span>
                 </div>
                 <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-slate-900 transition-all duration-500" style={{ width: `${p.hp}%` }} />
+                  <div className="h-full bg-rose-500 transition-all duration-500" style={{ width: `${p.hp}%` }} />
                 </div>
               </div>
             ))}
@@ -328,56 +314,48 @@ const MultiplayerSection: React.FC<MultiplayerSectionProps> = ({ onAddPoints }) 
 
       {/* Main Terminal */}
       <div className="lg:col-span-2">
-        <div className="bg-white rounded-[2rem] p-10 shadow-xl border border-slate-200 flex flex-col items-center min-h-[500px] relative">
+        <div className="bg-white rounded-[1.5rem] p-10 shadow-xl border border-slate-200 flex flex-col items-center min-h-[550px] relative overflow-hidden">
           {(myPlayer?.hp || 0) <= 0 && (
-            <div className="absolute inset-0 z-50 bg-slate-900/90 backdrop-blur-sm rounded-[2rem] flex items-center justify-center text-white flex-col">
-              <h4 className="text-xl font-bold mb-2">Subject Eliminated</h4>
-              <p className="text-xs text-slate-500 uppercase tracking-widest">Passive Monitoring Mode</p>
+            <div className="absolute inset-0 z-50 bg-slate-900/90 backdrop-blur-sm rounded-[1.5rem] flex items-center justify-center text-white flex-col p-10 text-center">
+              <h4 className="text-xl font-bold mb-2">Unit Offline</h4>
+              <p className="text-xs text-slate-500 uppercase tracking-[0.2em]">Passive Monitoring Active</p>
             </div>
           )}
 
           {currentWord && (
-            <div className="w-full text-center flex flex-col items-center">
-              <div className="text-7xl mb-10 opacity-80">{currentWord.emoji}</div>
-              <div className="text-base font-mono text-slate-400 font-bold bg-slate-50 px-6 py-2 rounded-lg border border-slate-100 mb-8">
+            <div className="w-full text-center flex flex-col items-center flex-1">
+              <div className="text-8xl mb-10 opacity-90 drop-shadow-md">{currentWord.emoji}</div>
+              <div className="text-sm font-mono text-slate-400 font-bold bg-slate-50 px-6 py-3 rounded-xl border border-slate-200 mb-8 shadow-inner">
                 {currentWord.phonetic}
               </div>
-              
               <button 
                 onClick={() => speak(currentWord.word)}
-                className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 hover:text-indigo-800 transition-colors mb-8"
+                className="text-[10px] font-bold uppercase tracking-[0.3em] text-indigo-600 hover:text-indigo-800 transition-colors mb-12 flex items-center gap-2"
               >
-                Reproduce Cue
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.657-3.657a1 1 0 011.14-.267zM15.707 6.293a1 1 0 010 1.414 3 3 0 000 4.242 1 1 0 01-1.414 1.414 5 5 0 010-7.072 1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                Replay Audio
               </button>
-
-              <form onSubmit={handleCorrectSubmission} className="w-full max-w-sm mt-auto">
+              <form onSubmit={handleCorrectSubmission} className="w-full max-w-sm mt-auto pb-6">
                 <input
                   type="text"
                   value={userInput}
                   onChange={(e) => setUserInput(e.target.value)}
                   disabled={isWordResolved || (myPlayer?.hp || 0) <= 0}
                   placeholder="Input Unit..."
-                  className="w-full text-center text-3xl font-bold py-4 border-b-2 border-slate-100 focus:outline-none focus:border-indigo-600 bg-transparent text-slate-900 uppercase tracking-widest placeholder:text-slate-100"
+                  className="w-full text-center text-4xl font-bold py-6 border-b-2 border-slate-100 focus:outline-none focus:border-indigo-600 bg-transparent text-slate-900 uppercase tracking-widest placeholder:text-slate-100 transition-all"
                   autoFocus
                   autoComplete="off"
                 />
-                
                 <div className="mt-12">
                   {isWordResolved ? (
-                    <button 
-                      type="button"
-                      onClick={nextWord}
-                      className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 shadow-lg animate-pulse"
-                    >
-                      Advance Sequence
+                    <button onClick={nextWord} type="button" className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 shadow-lg animate-pulse">
+                      Initialize Next Phase
                     </button>
                   ) : (
-                    <button 
-                      type="submit"
-                      disabled={!userInput.trim() || (myPlayer?.hp || 0) <= 0}
-                      className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-slate-800 shadow-lg"
-                    >
-                      Transmit Strike
+                    <button type="submit" disabled={!userInput.trim() || (myPlayer?.hp || 0) <= 0} className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-slate-800 shadow-lg">
+                      Transmit Data
                     </button>
                   )}
                 </div>
@@ -387,23 +365,22 @@ const MultiplayerSection: React.FC<MultiplayerSectionProps> = ({ onAddPoints }) 
         </div>
       </div>
 
-      {/* Terminal Feed */}
+      {/* Terminal Metadata */}
       <div className="space-y-6">
-        <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
+        <div className="bg-white border border-slate-200 p-6 rounded-[1.5rem] shadow-sm">
           <div className="flex justify-between items-center mb-3">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Subject Integrity</span>
             <span className="text-xs font-bold text-indigo-600">{myPlayer?.hp || 0}%</span>
           </div>
           <div className="h-2 bg-slate-50 rounded-full overflow-hidden border border-slate-100">
-            <div className="h-full bg-indigo-600 transition-all duration-500" style={{ width: `${myPlayer?.hp || 0}%` }} />
+            <div className="h-full bg-indigo-600 transition-all duration-700" style={{ width: `${myPlayer?.hp || 0}%` }} />
           </div>
         </div>
-
-        <div className="bg-slate-900 rounded-2xl p-5 text-white font-mono text-[9px] h-64 overflow-y-auto shadow-inner border border-slate-800">
-          <div className="text-slate-500 mb-4 uppercase tracking-[0.2em] border-b border-white/5 pb-2">Terminal Feed</div>
+        <div className="bg-slate-900 rounded-[1.5rem] p-6 text-white font-mono text-[9px] h-64 overflow-y-auto shadow-2xl border border-slate-800">
+          <div className="text-slate-500 mb-4 uppercase tracking-[0.2em] border-b border-white/5 pb-2">Central Feed</div>
           <div className="space-y-1.5">
             {battleLog.map((log, i) => (
-              <div key={i} className="text-slate-300">[{new Date().toLocaleTimeString([], {hour12: false})}] > {log}</div>
+              <div key={i} className="text-slate-300">[{new Date().toLocaleTimeString([], {hour12: false, second: '2-digit'})}] > {log}</div>
             ))}
           </div>
         </div>

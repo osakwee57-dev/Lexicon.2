@@ -379,7 +379,7 @@ const MultiplayerSection: React.FC<MultiplayerSectionProps> = ({ onAddPoints }) 
           <div className="text-slate-500 mb-4 uppercase tracking-[0.2em] border-b border-white/5 pb-2">Central Feed</div>
           <div className="space-y-1.5">
             {battleLog.map((log, i) => (
-              <div key={i} className="text-slate-300">[{new Date().toLocaleTimeString([], {hour12: false, second: '2-digit'})}] > {log}</div>
+              <div key={i} className="text-slate-300">[{new Date().toLocaleTimeString([], {hour12: false, second: '2-digit'})}] {" > "} {log}</div>
             ))}
           </div>
         </div>

@@ -1,14 +1,9 @@
+
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { SCRABBLE_DATA, Difficulty, RESERVE_DATA } from '../data/scrabble.ts';
 import { ScrabbleWord, Progress } from '../types.ts';
 import { playSuccessSound, playFailureSound } from '../utils/audioEffects.ts';
 import { trackEvent } from '../utils/analytics.ts';
-
-interface SpellingBeeSectionProps {
-  onAddPoints: (points: number) => void;
-  progress: Progress;
-  onLevelComplete: (difficulty: string, subLevel: number) => void;
-}
 
 interface GameStats {
   score: number;
@@ -17,6 +12,12 @@ interface GameStats {
   endTime: number | null;
   totalWords: number;
   attemptsCount: number;
+}
+
+interface SpellingBeeSectionProps {
+  onAddPoints: (points: number) => void;
+  progress: Progress;
+  onLevelComplete: (difficulty: string, subLevel: number) => void;
 }
 
 const SpellingBeeSection: React.FC<SpellingBeeSectionProps> = ({ onAddPoints, progress, onLevelComplete }) => {
@@ -104,7 +105,7 @@ const SpellingBeeSection: React.FC<SpellingBeeSectionProps> = ({ onAddPoints, pr
     onAddPoints(-5); // Cost for revealing
     setStats(s => s ? { ...s, score: s.score - 5 } : null);
     setFeedback('reveal');
-    setTimeout(moveToNextWord, 2500);
+    setTimeout(moveToNextWord, 3000);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -130,7 +131,7 @@ const SpellingBeeSection: React.FC<SpellingBeeSectionProps> = ({ onAddPoints, pr
       playFailureSound();
       if (nextAttempts >= 3) {
         setFeedback('reveal');
-        setTimeout(moveToNextWord, 2500);
+        setTimeout(moveToNextWord, 3000);
       } else {
         setFeedback('wrong');
         setAttempts(nextAttempts);
@@ -305,10 +306,18 @@ const SpellingBeeSection: React.FC<SpellingBeeSectionProps> = ({ onAddPoints, pr
           )}
 
           {feedback === 'reveal' && (
-            <div className="absolute inset-0 z-30 bg-slate-900/98 backdrop-blur-sm flex flex-col items-center justify-center text-white animate-in fade-in">
-              <span className="text-[10px] text-indigo-400 uppercase font-black tracking-[0.4em] mb-6">Correct Orthography</span>
-              <h3 className="text-6xl font-black text-white mb-10 tracking-tight drop-shadow-lg">{currentWord?.text}</h3>
-              <p className="text-slate-400 text-xs font-medium tracking-wide">Proceeding to next assessment...</p>
+            <div className="absolute inset-0 z-[100] bg-slate-900 flex flex-col items-center justify-center text-white animate-in zoom-in duration-300">
+              <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500 animate-pulse"></div>
+              <span className="text-[11px] text-indigo-400 uppercase font-black tracking-[0.6em] mb-8">Correct Orthography</span>
+              <h3 className="text-7xl font-black text-white mb-10 tracking-tighter filter drop-shadow-[0_0_20px_rgba(79,70,229,0.5)] animate-pulse">
+                {currentWord?.text}
+              </h3>
+              <div className="flex gap-2">
+                <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+              </div>
+              <p className="mt-8 text-slate-500 text-[10px] font-bold uppercase tracking-widest">Procedural Handover...</p>
             </div>
           )}
 

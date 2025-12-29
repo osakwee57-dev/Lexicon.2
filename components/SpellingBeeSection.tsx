@@ -63,7 +63,7 @@ const SpellingBeeSection: React.FC<SpellingBeeSectionProps> = ({ onAddPoints, pr
       skips: 0,
       startTime: Date.now(),
       endTime: null,
-      totalWords: 10,
+      totalWords: words.length || 10,
       attemptsCount: 0
     });
   };
@@ -96,6 +96,15 @@ const SpellingBeeSection: React.FC<SpellingBeeSectionProps> = ({ onAddPoints, pr
     setHasPlayedAudio(false);
     setUserInput('');
     setAttempts(0);
+  };
+
+  const manualReveal = () => {
+    if (feedback !== 'none' || !hasPlayedAudio) return;
+    trackEvent('manual_reveal_spelling', { word: queue[currentIndex].text });
+    onAddPoints(-5); // Cost for revealing
+    setStats(s => s ? { ...s, score: s.score - 5 } : null);
+    setFeedback('reveal');
+    setTimeout(moveToNextWord, 2500);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -230,7 +239,7 @@ const SpellingBeeSection: React.FC<SpellingBeeSectionProps> = ({ onAddPoints, pr
 
   if (stats?.endTime) {
     const duration = Math.floor((stats.endTime - stats.startTime) / 1000);
-    const accuracy = Math.round((stats.totalWords / stats.attemptsCount) * 100) || 0;
+    const accuracy = Math.round((stats.totalWords / Math.max(1, stats.attemptsCount)) * 100) || 0;
     
     return (
       <div className="max-w-xl mx-auto py-12 animate-in zoom-in">
@@ -240,7 +249,7 @@ const SpellingBeeSection: React.FC<SpellingBeeSectionProps> = ({ onAddPoints, pr
           <div className="grid grid-cols-2 gap-px bg-slate-100 rounded-xl overflow-hidden border border-slate-100 mb-10">
             <div className="bg-white p-6">
               <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Score</div>
-              <div className="text-2xl font-bold text-indigo-600">+{stats.score}</div>
+              <div className="text-2xl font-bold text-indigo-600">{stats.score > 0 ? `+${stats.score}` : stats.score}</div>
             </div>
             <div className="bg-white p-6">
               <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Duration</div>
@@ -290,26 +299,28 @@ const SpellingBeeSection: React.FC<SpellingBeeSectionProps> = ({ onAddPoints, pr
 
         <div className="bg-slate-50 rounded-2xl p-12 border border-slate-100 relative overflow-hidden text-center min-h-[500px] flex flex-col items-center justify-center">
           {feedback === 'correct' && (
-            <div className="absolute inset-0 z-20 bg-emerald-600/95 flex flex-col items-center justify-center text-white animate-in fade-in">
+            <div className="absolute inset-0 z-30 bg-emerald-600/95 flex flex-col items-center justify-center text-white animate-in fade-in">
               <h3 className="text-3xl font-bold">Validated</h3>
             </div>
           )}
 
           {feedback === 'reveal' && (
-            <div className="absolute inset-0 z-20 bg-slate-900/98 flex flex-col items-center justify-center text-white animate-in fade-in">
-              <span className="text-[10px] text-slate-500 uppercase tracking-[0.3em] mb-4">Correct Orthography</span>
-              <h3 className="text-5xl font-bold text-white mb-8 tracking-tight">{currentWord.text}</h3>
-              <p className="text-slate-500 text-xs italic">Updating memory buffers...</p>
+            <div className="absolute inset-0 z-30 bg-slate-900/98 backdrop-blur-sm flex flex-col items-center justify-center text-white animate-in fade-in">
+              <span className="text-[10px] text-indigo-400 uppercase font-black tracking-[0.4em] mb-6">Correct Orthography</span>
+              <h3 className="text-6xl font-black text-white mb-10 tracking-tight drop-shadow-lg">{currentWord?.text}</h3>
+              <p className="text-slate-400 text-xs font-medium tracking-wide">Proceeding to next assessment...</p>
             </div>
           )}
 
           <div className="w-full flex flex-col items-center">
-            <div className="text-8xl mb-8 opacity-90">{currentWord.emoji}</div>
-            <div className="text-sm font-mono text-slate-400 bg-white px-6 py-2 rounded-lg border border-slate-200 mb-10">
-              {currentWord.phonetic}
-            </div>
+            {currentWord && <div className="text-8xl mb-8 opacity-90 transition-transform hover:scale-110 duration-300">{currentWord.emoji}</div>}
+            {currentWord && (
+              <div className="text-sm font-mono text-slate-400 bg-white px-6 py-2 rounded-lg border border-slate-200 mb-10 shadow-sm">
+                {currentWord.phonetic}
+              </div>
+            )}
 
-            <div className="flex gap-3 mb-12">
+            <div className="flex flex-wrap justify-center gap-3 mb-12">
               <button 
                 onClick={() => speak(currentWord.text)}
                 className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all shadow-md active:scale-95 flex items-center gap-2"
@@ -328,6 +339,17 @@ const SpellingBeeSection: React.FC<SpellingBeeSectionProps> = ({ onAddPoints, pr
                 }`}
               >
                 Skip Unit
+              </button>
+
+              <button 
+                disabled={!hasPlayedAudio || feedback !== 'none'}
+                onClick={manualReveal}
+                className={`px-4 py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all border ${
+                  !hasPlayedAudio ? 'bg-slate-50 text-slate-300 border-slate-100 cursor-not-allowed' : 'bg-rose-50 border-rose-100 text-rose-600 hover:bg-rose-100'
+                }`}
+                title="Costs 5 points"
+              >
+                Reveal (-5)
               </button>
             </div>
 
